@@ -25,11 +25,6 @@ x.addConductance('AB','Leak',@() 0.0622/x.AB.A,-50);
 
 x.I_ext = 0;
 
-figure('outerposition',[300 300 1200 600],'PaperUnits','points','PaperSize',[1200 600]); hold on
-time = x.dt:x.dt:x.t_end;
-plot(time,x.integrate,'k')
-
-
 p = procrustes;
 p.x = x;
 
@@ -39,7 +34,7 @@ p.f = {@p.dutyCycle};
 p.parameters_to_vary = {'I_ext'};
 p.parameter_values = linspace(0,1,5);
 
-p.targets = [0.0516]; 
+p.targets = .1; 
 p.weights = [100];
 
 
@@ -91,14 +86,10 @@ subplot(1,3,3); hold on
 plot(I_ext,n_spikes_per_burst,'ko-')
 ylabel('# spikes/burst')
 xlabel('I_{ext} (nA)')
-set(gca,'YLim',[0 5])
+set(gca,'YLim',[0 10])
 
 prettyFig();
 
-if being_published
-	snapnow
-	delete(gcf)
-end
 
 
 

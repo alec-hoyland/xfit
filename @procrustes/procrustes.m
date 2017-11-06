@@ -25,7 +25,7 @@ properties
 
 	use_cache = true
 	purge_cache = false
-	use_parallel = false
+	use_parallel = true
 	nsteps = 300
 	display_type = 'iter'
 	max_fun_evals = 2e4
