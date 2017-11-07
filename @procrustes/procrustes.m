@@ -25,7 +25,7 @@ properties
 
 	use_cache = true
 	purge_cache = false
-	use_parallel = true
+	use_parallel = false
 	nsteps = 300
 	display_type = 'iter'
 	max_fun_evals = 2e4
@@ -104,6 +104,7 @@ methods
 			C = 0;
 			assert(length(self.parameters_to_vary) == 1,'More than one parameter to vary while optimizing not supported yet')
 			for i = 1:length(self.parameter_values)
+                keyboard
 				self.x.(self.parameters_to_vary{1}) = self.parameter_values(i);
 
 				% run the xolotl simulation, run the functions and evaluate the cost
