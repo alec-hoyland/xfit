@@ -104,37 +104,27 @@ methods
 			C = 0;
 			assert(length(self.parameters_to_vary) == 1,'More than one parameter to vary while optimizing not supported yet')
 			for i = 1:length(self.parameter_values)
-                eval(['self.x.' self.parameters_to_vary{1} '= self.parameter_values(i);']);
-
-				% run the xolotl simulation, run the functions and evaluate the cost
-				[V,Ca] = self.x.integrate;
-
-				% skip some transient
-				z = floor(length(V)*self.transient_length);
-				V(1:z,:) = [];
-				Ca(1:z,:) = [];
-
-				% run functions on this
-				n_comp = length(self.x.compartment_names);
-				c = zeros(n_comp,length(self.f));
-				for i = 1:length(self.f)
-					for j = 1:n_comp
-						c(j,i) = self.f{i}(V(:,j),Ca(:,j));
-					end
-				end
+if c == 0
+                    keyboard
+                end
 
 
 				c = (((c - self.targets).^2)./(self.targets.^2)).*self.weights;
 				c = sum(c(:));
-                C = C + c;
-				if isnan(C)
-					C = Inf;
+                
+				if isnan(c)
+					c = Inf;
 					break
 				end
-				
+				C = C + c;
 			end
-			c = C;
-
+			c = C
+            if c == 0
+                keyboard
+            end
+			if ~isscalar(c)
+				keyboard
+			end
 		end
 
 

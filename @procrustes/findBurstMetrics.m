@@ -1,15 +1,15 @@
-%                                        _            
-%    _ __  _ __ ___   ___ _ __ _   _ ___| |_ ___  ___ 
+%                                        _
+%    _ __  _ __ ___   ___ _ __ _   _ ___| |_ ___  ___
 %   | '_ \| '__/ _ \ / __| '__| | | / __| __/ _ \/ __|
 %   | |_) | | | (_) | (__| |  | |_| \__ \ ||  __/\__ \
 %   | .__/|_|  \___/ \___|_|   \__,_|___/\__\___||___/
-%   |_| 
+%   |_|
 %
 % finds the following things:
 % (1) burst period
 % (2) # of spikes / burst
 % (3) time of first spike relative to Ca peak
-% (4) time of last spike relative to Ca peak 
+% (4) time of last spike relative to Ca peak
 % (5) height of calcium peak
 
 function [burst_metrics] = findBurstMetrics(self,V,Ca)
@@ -17,7 +17,7 @@ function [burst_metrics] = findBurstMetrics(self,V,Ca)
 burst_metrics = NaN(5,1);
 
 
-% to do -- make this work for more than one compartment 
+% to do -- make this work for more than one compartment
 
 V = V(:,1);
 Ca = Ca(:,1);
@@ -34,7 +34,7 @@ if length(peak_Ca)<3
 	return
 end
 
-% check for similarity of peak heighrs 
+% check for similarity of peak heighrs
 if std(peak_Ca(2:end))/(mean(peak_Ca(2:end))) > .2
 	%disp('Calcium peaks not similar enough')
 	%disp(std(peak_Ca(2:end))/(mean(peak_Ca(2:end))))
@@ -95,4 +95,3 @@ burst_metrics(2) = mean(n_spikes(2:end));
 burst_metrics(3) = mean(first_spike_loc(2:end));
 burst_metrics(4) = mean(last_spike_loc(2:end));
 burst_metrics(5) = mean(peak_Ca(2:end));
-
