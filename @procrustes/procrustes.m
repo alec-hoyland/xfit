@@ -25,7 +25,7 @@ properties
 
 	use_cache = true
 	purge_cache = false
-	use_parallel = false
+	use_parallel = true
 	nsteps = 300
 	display_type = 'iter'
 	max_fun_evals = 2e4
@@ -93,7 +93,6 @@ methods
 				end
 			end
 
-
 			c = (((c - self.targets).^2)./(self.targets.^2)).*self.weights;
 			c = sum(c);
 			if isnan(c)
@@ -123,15 +122,16 @@ methods
 					end
 				end
 
-
+				% protect against dividing by zero
+				self.targets(self.targets==0) = 1;
 				c = (((c - self.targets).^2)./(self.targets.^2)).*self.weights;
 				c = sum(c(:));
-                C = C + c;
+        C = C + c;
 				if isnan(C)
 					C = Inf;
 					break
 				end
-				
+
 			end
 			c = C;
 

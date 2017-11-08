@@ -35,7 +35,7 @@ if length(peak_Ca)<3
 end
 
 % check for similarity of peak heighrs
-if std(peak_Ca(2:end))/(mean(peak_Ca(2:end))) > .2
+if std(peak_Ca(2:end))/(mean(peak_Ca(2:end))) > .5
 	%disp('Calcium peaks not similar enough')
 	%disp(std(peak_Ca(2:end))/(mean(peak_Ca(2:end))))
 	return
@@ -43,7 +43,7 @@ end
 
 burst_durations = diff(burst_peak_loc(2:end));
 
-if std(burst_durations)/mean(burst_durations) > 0.1
+if std(burst_durations)/mean(burst_durations) > 0.5
 	%disp('Burst durations too variable')
 	%disp(std(burst_durations)/mean(burst_durations))
 	return
