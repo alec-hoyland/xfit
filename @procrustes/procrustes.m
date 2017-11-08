@@ -149,7 +149,7 @@ methods
 		assert(~isempty(self.weights),'Weights cannot be empty')
 		assert(length(unique([length(self.f), length(self.targets), length(self.weights)])) == 1, 'Length of targets, weights, and functions should be the same')
 		% c = zeros(n_comp,length(self.f));
-		assert(isequal(size(self.targets), size(self.weights)) || (isvector(self.targets) && isvector(self.weights) && numel(self.targets) == numel(self.weights)),'Dimensions of targets and weights should be n_comp, length(procrustes.f)')
+		assert(isequal(size(self.targets), size(self.weights)) || (isvector(self.targets) && isvector(self.weights) && numel(self.targets) == numel(self.weights)),'Dimensions of targets and weights should be n_comp x length(procrustes.f)')
 
 		if isempty(self.seed) && ~isempty(self.ub) && ~isempty(self.lb)
 			% pick a random seed within bounds
