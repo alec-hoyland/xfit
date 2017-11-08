@@ -6,22 +6,22 @@ classdef procrustes
 
 properties
 	x@xolotl
-	
-	% function to minimize 
-	f@cell 
+
+	% function to minimize
+	f@cell
 	targets
 	weights
 
-	% parameters to optimize 
+	% parameters to optimize
 	parameter_names@cell
 	seed
 	lb
 	ub
 
-	% parameters to vary while optimizing 
+	% parameters to vary while optimizing
 	parameters_to_vary@cell
 	parameter_values
-	
+
 
 	use_cache = true
 	purge_cache = false
@@ -39,7 +39,7 @@ properties
 
 end % end props
 
-methods 
+methods
 	function self = procrustes()
 		% check for optimisation toolbox
 		v = ver;
@@ -49,14 +49,14 @@ methods
 
 
 
-	end % end constructor 
+	end % end constructor
 
 	function self = set.x(self,value)
 		value.closed_loop = false;
 		assert(length(value)==1,'Only one Xolotl object at a time')
 		value.skip_hash_check = true;
 		self.x = value;
-	end 
+	end
 
 
 
@@ -71,7 +71,7 @@ methods
 		% update parameters in the xolotl object using x
 
 		self.updateParams(params);
-		
+
 
 		% vary additional params if need be
 		if isempty(self.parameters_to_vary)
@@ -136,8 +136,8 @@ methods
 
 		end
 
-		
-		
+
+
 	end
 	function x = fit(self)
 
@@ -148,6 +148,8 @@ methods
 
 		assert(~isempty(self.weights),'Weights cannot be empty')
 		assert(length(unique([length(self.f), length(self.targets), length(self.weights)])) == 1, 'Length of targets, weights, and functions should be the same')
+		% c = zeros(n_comp,length(self.f));
+		assert(isequal(size(self.targets), size(self.weights)) || (isvector(self.targets) && isvector(self.weights) && numel(self.targets) == numel(self.weights)),'Dimensions of targets and weights should be n_comp, length(procrustes.f)')
 
 		if isempty(self.seed) && ~isempty(self.ub) && ~isempty(self.lb)
 			% pick a random seed within bounds
