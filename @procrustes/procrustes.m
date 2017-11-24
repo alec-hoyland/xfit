@@ -2,26 +2,24 @@
 % to change parameters in a Xolotl object
 % so that it fits some arbitrary set of conditions
 
-classdef procrustes
+classdef procrustes < handle
 
 properties
 	x@xolotl
 
+	% manual, interactive optimization
+	plot_func@function_handle
+	handles
+	puppeteer_obj@puppeteer
+
 	% function to minimize
-	f@cell
-	targets
-	weights
+	sim_func@function_handle
 
 	% parameters to optimize
 	parameter_names@cell
 	seed
 	lb
 	ub
-
-	% parameters to vary while optimizing
-	parameters_to_vary@cell
-	parameter_values
-
 
 	use_cache = true
 	purge_cache = false
@@ -34,8 +32,6 @@ properties
 	tol_mesh = 1e-6
 	tol_x = 1e-6
 
-	transient_length = 0.5
-
 
 end % end props
 
@@ -45,10 +41,6 @@ methods
 		v = ver;
 		assert(any(strcmp('Optimization Toolbox', {v.Name})),'optimisation toolbox is required')
 		assert(any(strcmp('Global Optimization Toolbox', {v.Name})),'Global Optimization Toolbox is required')
-
-
-
-
 	end % end constructor
 
 	function self = set.x(self,value)
@@ -57,8 +49,6 @@ methods
 		value.skip_hash_check = true;
 		self.x = value;
 	end
-
-
 
 	function updateParams(self,params)
 		for i = 1:length(self.parameter_names)
@@ -69,88 +59,52 @@ methods
 
 	function c = evaluate(self,params)
 		% update parameters in the xolotl object using x
-
 		self.updateParams(params);
+		c = self.sim_func(self.x);
+	end
 
+	function manipulate(self)
 
-		% vary additional params if need be
-		if isempty(self.parameters_to_vary)
+		assert(~isempty(self.parameter_names),'No parameter names defined')
 
-			% run the xolotl simulation, run the functions and evaluate the cost
-			[V,Ca] = self.x.integrate;
-
-			% skip some transient
-			z = floor(length(V)*self.transient_length);
-			V(1:z,:) = [];
-			Ca(1:z,:) = [];
-
-			% run functions on this
-			n_comp = length(self.x.compartment_names);
-			c = zeros(n_comp,length(self.f));
-			for i = 1:length(self.f)
-				for j = 1:n_comp
-					c(j,i) = self.f{i}(V(:,j),Ca(:,j));
-				end
-			end
-
-			c = (((c - self.targets).^2)./(self.targets.^2)).*self.weights;
-			c = sum(c);
-			if isnan(c)
-				c = Inf;
-			end
-
+		if isempty(self.plot_func)
+			disp('not coded yet')
 		else
-			C = 0;
-			assert(length(self.parameters_to_vary) == 1,'More than one parameter to vary while optimizing not supported yet')
-			for i = 1:length(self.parameter_values)
-                eval(['self.x.' self.parameters_to_vary{1} '= self.parameter_values(i);']);
+			% call the plot_func to make the figure
+			self.handles = self.plot_func();
 
-				% run the xolotl simulation, run the functions and evaluate the cost
-				[V,Ca] = self.x.integrate;
+			% make a puppeteer object 
 
-				% skip some transient
-				z = floor(length(V)*self.transient_length);
-				V(1:z,:) = [];
-				Ca(1:z,:) = [];
-
-				% run functions on this
-				n_comp = length(self.x.compartment_names);
-				c = zeros(n_comp,length(self.f));
-				for i = 1:length(self.f)
-					for j = 1:n_comp
-						c(j,i) = self.f{i}(V(:,j),Ca(:,j));
-					end
-				end
-
-				% protect against dividing by zero
-				self.targets(self.targets==0) = 1;
-				c = (((c - self.targets).^2)./(self.targets.^2)).*self.weights;
-				c = sum(c(:));
-        C = C + c;
-				if isnan(C)
-					C = Inf;
-					break
-				end
-
+			S = struct;
+			L = struct;
+			U = struct;
+			for i = 1:length(self.parameter_names)
+				S.(strrep(self.parameter_names{i},'.','_')) = self.seed(i);
+				L.(strrep(self.parameter_names{i},'.','_')) = self.lb(i);
+				U.(strrep(self.parameter_names{i},'.','_')) = self.ub(i);
 			end
-			c = C;
 
+			self.puppeteer_obj = puppeteer(S,L,U);
+			self.puppeteer_obj.callback_function = @self.puppeteerCallback;
 		end
 
-
-
 	end
+
+	function puppeteerCallback(self,params)
+		self.updateParams(struct2vec(params));
+
+		self.plot_func(self.handles,self.x);
+	end
+
 	function x = fit(self)
+
+		assert(~isempty(self.parameter_names),'No parameter names defined')
 
 		self.x.transpile;
 		self.x.compile;
 
 		psoptions = psoptimset('UseParallel',self.use_parallel, 'Vectorized', 'off','Cache','on','CompletePoll','on','Display',self.display_type,'MaxIter',self.nsteps,'MaxFunEvals',self.max_fun_evals,'TolMesh',self.tol_mesh,'TolX',self.tol_x);
 
-		assert(~isempty(self.weights),'Weights cannot be empty')
-		assert(length(unique([length(self.f), length(self.targets), length(self.weights)])) == 1, 'Length of targets, weights, and functions should be the same')
-		% c = zeros(n_comp,length(self.f));
-		assert(isequal(size(self.targets), size(self.weights)) || (isvector(self.targets) && isvector(self.weights) && numel(self.targets) == numel(self.weights)),'Dimensions of targets and weights should be n_comp x length(procrustes.f)')
 
 		if isempty(self.seed) && ~isempty(self.ub) && ~isempty(self.lb)
 			% pick a random seed within bounds
@@ -159,14 +113,10 @@ methods
 			self.seed = (rand(length(self.ub),1).*(self.ub - self.lb) + self.lb);
 		end
 
-
 		assert(length(unique([length(self.seed), length(self.lb), length(self.ub)])) == 1, 'Length of lower bounds, upper bounds and seed should be the same')
 
 		x = patternsearch(@(params) self.evaluate(params),self.seed,[],[],[],[],self.lb,self.ub,psoptions);
-
 	end
-
-
 
 end % end methods
 
