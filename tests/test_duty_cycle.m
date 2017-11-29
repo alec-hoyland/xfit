@@ -1,6 +1,7 @@
-% testing scrupt
+% testing script
 
 
+% first, set up a Xolotl object
 
 % conversion from Prinz to phi
 vol = 1; % this can be anything, doesn't matter
@@ -10,6 +11,7 @@ F = 96485; % Faraday constant in SI units
 phi = (2*f*F*vol)/tau_Ca;
 
 x = xolotl;
+x.cleanup;
 x.addCompartment('AB',-65,0.02,10,0.0628,vol,phi,3000,0.05,tau_Ca,0);
 
 x.addConductance('AB','prinz/NaV',1000,50);
@@ -22,21 +24,22 @@ x.addConductance('AB','prinz/HCurrent',.1,-20);
 
 x.I_ext = 0;
 x.dt = 100e-3;
-x.t_end = 10e3;
+x.t_end = 20e3;
 
 x.transpile;
 x.compile;
-x.integrate;
+V = x.integrate;
+
 
 p = procrustes;
 p.x = x;
 
-
 p.parameter_names = {'AB.NaV.gbar','AB.CaT.gbar','AB.CaS.gbar','AB.ACurrent.gbar','AB.KCa.gbar','AB.Kd.gbar','AB.HCurrent.gbar'};
 
-p.seed = [1967 25 92 116 306 1987 .1];
+p.seed = [1000 25 60 500 50 1000 .1];
 p.lb = 0*p.seed;
 p.ub = 2e3*ones(1,length(p.parameter_names));
+
 
 p.sim_func = @test_ext_func;
 p.plot_func = @test_plot_func;

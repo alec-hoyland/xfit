@@ -5,7 +5,7 @@
 % and even vary parameters on the object. 
 % as long as this returns a cost, it's all good. 
 
-function [C, duty_cycle, freq, n_spikes_per_burst, example_V] = test_ext_fun(x)
+function [C, duty_cycle, freq, n_spikes_per_burst, example_V] = test_ext_func(x)
 
 
 
@@ -36,22 +36,20 @@ for i = 1:length(I_ext)
 	end
 
 	% skip some transient
-	transient_cutoff = floor(length(V)/2);
+	transient_cutoff = floor(length(V)/4);
 	Ca = Ca(transient_cutoff:end,1);
 	V = V(transient_cutoff:end);
 
-	if i == 2 & nargout > 1
+	if i == 1 & nargout > 1
 		example_V = V;
 	end
 
 	bm = psychopomp.findBurstMetrics(V,Ca);
 
 	n_spikes_per_burst(i) = bm(2);
-	duty_cycle(i) = 10;
+	duty_cycle(i) = bm(9);
 
-	if bm(2) > 0
-		duty_cycle(i) = (bm(4)-bm(3))/bm(1);
-	end
+
 
 	if bm(2) < min_n_spikes
 		C = Inf;

@@ -12,7 +12,7 @@ C = 0;
 
 % specify our targets
 target_freq = 1;
-target_dc = .2;
+target_dc = .3;
 max_n_spikes = Inf;
 min_n_spikes = 3; 
 
@@ -25,7 +25,7 @@ catch
 end
 
 % skip some transient
-transient_cutoff = floor(length(V)/2);
+transient_cutoff = floor(length(V)/4);
 Ca = Ca(transient_cutoff:end,1);
 V = V(transient_cutoff:end);
 

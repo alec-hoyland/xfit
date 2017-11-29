@@ -116,6 +116,10 @@ methods
 		assert(length(unique([length(self.seed), length(self.lb), length(self.ub)])) == 1, 'Length of lower bounds, upper bounds and seed should be the same')
 
 		x = patternsearch(@(params) self.evaluate(params),self.seed,[],[],[],[],self.lb,self.ub,psoptions);
+
+		% update seed
+		self.seed = x;
+
 	end
 
 end % end methods
