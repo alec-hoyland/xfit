@@ -125,7 +125,7 @@ methods
 
 		case 'particleswarm'
 			
-			self.options.InitialSwarmMatrix = self.seed;
+			self.options.InitialSwarmMatrix = self.seed(:)';
 			x = particleswarm(@(params) self.evaluate(params),length(self.ub),self.lb,self.ub,self.options);
 			self.seed = x;
 		case 'ga'

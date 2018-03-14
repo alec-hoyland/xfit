@@ -37,13 +37,24 @@ x.I_ext = 0;
 V = x.integrate;
 
 
-p = procrustes('ga');
+p = procrustes('particleswarm');
 p.x = x;
 
 p.parameter_names = {'AB.NaV.gbar','AB.CaT.gbar','AB.CaS.gbar','AB.ACurrent.gbar','AB.KCa.gbar','AB.Kd.gbar','AB.HCurrent.gbar','AB.Leak.gbar'};
 
-p.seed = [1000 25 60 500 50 1000 .1 .3];
-p.lb = 1e-3*p.seed;
-p.ub = 10*p.seed;
+p.lb = 1e-3 + zeros(1,8);
+p.ub = 1500*ones(1,8);
 
 p.sim_func = @example_func;
+
+% figure('outerposition',[0 0 1000 500],'PaperUnits','points','PaperSize',[1000 500]); hold on
+% t = x.dt*(1:length(V))*1e-3;
+% c = lines;
+% for i = 1:6
+% 	p.seed = rand(8,1)*10;
+% 	subplot(2,3,i); hold on
+% 	p.fit;
+% 	p.updateParams(p.seed);
+% 	V = p.x.integrate;
+% 	plot(t,V,'Color',c(i,:))
+% end

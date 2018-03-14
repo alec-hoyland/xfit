@@ -27,6 +27,10 @@ Right now, you can use two algorithms:
 
 The bottom plot shows how these algorithms perform. Using `particleswarm`, we can go from the initial neuron to the target neuron in around 5 minutes on a quad-core laptop. Note that the genetic algorithm performs quite poorly here. 
 
+This also means that you can very efficiently generate neurons from random initial conditions. The following six bursting neurons were found in **6 minutes** from random initial conditions. 
+
+
+![](https://user-images.githubusercontent.com/6005346/37423634-bf55520c-2794-11e8-87b6-3c466da8df19.png)
 
 # Installation 
 
