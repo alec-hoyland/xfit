@@ -7,7 +7,7 @@ Force-fit [Xolotl]() objects so that they satisfy an arbitrary set of constraint
 
 # What?
 
-![](https://user-images.githubusercontent.com/6005346/37379826-e395ecdc-270b-11e8-914e-bdb53ef62d26.png)
+![](https://user-images.githubusercontent.com/6005346/37410120-37d45896-2776-11e8-95b8-77353996d2a5.png)
 
 Let's say you start with the neuron on the left. You're unhappy with it, because:
 
@@ -23,8 +23,9 @@ Right now, you can use two algorithms:
 
 1. `patternsearch` which is deterministic, and is a glorified form of gradient descent
 2. `particleswarm` which is based on how flocks of birds fly and avoid predators. It's stochastic 
+3. `ga` which is stands for genetic algorithm. 
 
-The bottom plot shows how these algorithms perform. Using `particleswarm`, we can go from the initial neuron to the target neuron in around 5 minutes on a quad-core laptop. 
+The bottom plot shows how these algorithms perform. Using `particleswarm`, we can go from the initial neuron to the target neuron in around 5 minutes on a quad-core laptop. Note that the genetic algorithm performs quite poorly here. 
 
 
 # Installation 

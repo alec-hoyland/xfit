@@ -110,27 +110,27 @@ methods
 			self.seed = (rand(length(self.ub),1).*(self.ub - self.lb) + self.lb);
 		end
 
+		% reset logging
+		self.timestamp = NaN(1e3,1);
+		self.best_cost = NaN(1e3,1);
+
+
+		assert(length(unique([length(self.seed), length(self.lb), length(self.ub)])) == 1, 'Length of lower bounds, upper bounds and seed should be the same')
 
 		switch self.engine
 		case 'patternsearch'
 
-			assert(length(unique([length(self.seed), length(self.lb), length(self.ub)])) == 1, 'Length of lower bounds, upper bounds and seed should be the same')
-
 			x = patternsearch(@(params) self.evaluate(params),self.seed,[],[],[],[],self.lb,self.ub,self.options);
-
-			% update seed
 			self.seed = x;
 
-
 		case 'particleswarm'
-			self.timestamp = zeros(1e3,1);
-			self.best_cost = zeros(1e3,1);
-
+			
 			self.options.InitialSwarmMatrix = self.seed;
-
 			x = particleswarm(@(params) self.evaluate(params),length(self.ub),self.lb,self.ub,self.options);
-
-			% update seed
+			self.seed = x;
+		case 'ga'
+			self.options.InitialPopulationMatrix = self.seed;
+			x = ga(@(params) self.evaluate(params), length(self.ub), [], [], [], [], self.lb, self.ub, [], self.options);
 			self.seed = x;
 
 		end
@@ -154,6 +154,14 @@ methods
 			self.options.Display = 'iter';
 			self.options.MaxTime = 100;
 			self.options.OutputFcn = @self.swarm_logger;
+		case 'ga'
+			self.engine = 'ga';
+			self.options = optimoptions('ga');
+			self.options.UseParallel = true;
+			self.options.FitnessLimit = 0;
+			self.options.Display = 'iter';
+			self.options.MaxTime = 100;
+			self.options.OutputFcn = @self.ga_logger;
 		otherwise 
 			error('Unknown engine')
 		end
@@ -172,8 +180,13 @@ methods
 		optchanged = false;
 		self.best_cost(optimValues.iteration+1) = optimValues.fval;
 		self.timestamp(optimValues.iteration+1) = now;
-
 	end
+
+	function [state, options, optchanged] = ga_logger(self, options, state, flag)
+		optchanged = false;
+		self.best_cost(state.Generation + 1) = min(state.Score);
+		self.timestamp(state.Generation + 1) = now;
+	end % end ga logger
 
 end % end methods
 

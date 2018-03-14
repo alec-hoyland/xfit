@@ -37,7 +37,7 @@ x.I_ext = 0;
 V = x.integrate;
 
 
-p = procrustes('particleswarm');
+p = procrustes('ga');
 p.x = x;
 
 p.parameter_names = {'AB.NaV.gbar','AB.CaT.gbar','AB.CaS.gbar','AB.ACurrent.gbar','AB.KCa.gbar','AB.Kd.gbar','AB.HCurrent.gbar','AB.Leak.gbar'};
@@ -47,5 +47,3 @@ p.lb = 1e-3*p.seed;
 p.ub = 10*p.seed;
 
 p.sim_func = @example_func;
-p.engine = 'patternsearch';
-p.options.MaxTime = 600;
