@@ -22,12 +22,12 @@ x.addConductance('AB','prinz/KCa',50,-80);
 x.addConductance('AB','prinz/Kd',1000,-80);
 x.addConductance('AB','prinz/HCurrent',.1,-20);
 
-x.I_ext = 0;
 x.dt = 100e-3;
 x.t_end = 20e3;
 
 x.transpile;
 x.compile;
+x.I_ext = 0;
 V = x.integrate;
 
 
@@ -44,7 +44,7 @@ p.ub = 2e3*ones(1,length(p.parameter_names));
 p.sim_func = @test_ext_func;
 p.plot_func = @test_plot_func;
 
-return
+
 
 tic
 g = p.fit;

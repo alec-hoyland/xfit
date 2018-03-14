@@ -4,6 +4,29 @@ Force-fit [Xolotl]() objects so that they satisfy an arbitrary set of constraint
 
 ![](./images/bed.png) 
 
+
+# What?
+
+![](https://user-images.githubusercontent.com/6005346/37379826-e395ecdc-270b-11e8-914e-bdb53ef62d26.png)
+
+Let's say you start with the neuron on the left. You're unhappy with it, because:
+
+1. it's voltage troughs don't go down to -70 mV
+2. The slow wave goes past -40 mV
+3. Its spikes go below the slow wave
+4. It doesn't have a burst frequency of .5 Hz
+5. It doesn't have a duty cycle of .3
+
+What if you could make this neuron do what you want it to? `procrustes` fiddles with parameters in the model till it does what it should (on the right).
+
+Right now, you can use two algorithms: 
+
+1. `patternsearch` which is deterministic, and is a glorified form of gradient descent
+2. `particleswarm` which is based on how flocks of birds fly and avoid predators. It's stochastic 
+
+The bottom plot shows how these algorithms perform. Using `particleswarm`, we can go from the initial neuron to the target neuron in around 5 minutes on a quad-core laptop. 
+
+
 # Installation 
 
 Get this repo from within `MATLAB` using my package manager:
@@ -29,53 +52,8 @@ Finally, make sure you [configure MATLAB so that it is set up to delete files pe
 
 # Usage 
 
-Set up a `xolotl` object. (See [this]() for details)
+Look at `tests/fine_tune_neuron.m` for an example that has been worked out. 
 
-Create a  `procrustes` object.
-
-```
-p = procrustes;
-```
-
-Configure the object and define a function and a target to minimize. Here, in this example, we're going to double the period of the neuron while keeping the # of spikes/burst the same.
-
-```matlab
-p.x = x;
-% configure 
-p.f = {@p.burstPeriod, @p.nSpikesPerBurst};
-p.targets = [714, 4]; 
-p.weights = [100, 100];
-```
-
-We want to vary all maximal conductances simulateously: 
-
-```matlab
-p.parameter_names = {'AB.NaV.gbar','AB.CaT.gbar','AB.CaS.gbar','AB.ACurrent.gbar','AB.KCa.gbar','AB.Kd.gbar','AB.HCurrent.gbar'};
-
-p.seed = [1830 23 27 246 980 610 10];
-p.lb = 0*p.seed;
-p.ub = 2e3*ones(1,7);
-
-```
-
-Now run the optimization algorithm:
-
-```matlab
-g = p.fit;
-```
-
-This is what the result looks like. Note that the fit `xolotl` object satisfies our constraints (its period is doubled, but the number of spikes/burst is the same).
-
-![](./images/example.jpg) 
-
-
-# Benchmarks 
-
-| Task | Time | # evaluations | Hardware and parallelism |
-|----- | ----- | ---- | --- |
-| Double the period of a bursting neuron | 20 s | 526 | 12-core Mac Pro (Late 2013) using all cores |
-| Double the period of a bursting neuron | 48 s | 526 | 12-core Mac Pro (Late 2013) using 1 thread |
-| Double the # of spikes/burst | 21 s | 664 | 12-core Mac Pro (Late 2013) using all cores |
 
 # License
 

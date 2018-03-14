@@ -21,32 +21,33 @@ properties
 	lb
 	ub
 
-	use_cache = true
-	purge_cache = false
-	use_parallel = true
-	nsteps = 300
+	options
+
 	display_type = 'iter'
-	max_fun_evals = 2e4
 	minimise_r2 = false
-	engine = 'patternsearch'
-	tol_mesh = 1e-6
-	tol_x = 1e-6
+	engine 
+
+
+	% logging
+	timestamp
+	best_cost
 
 
 end % end props
 
 methods
-	function self = procrustes()
+	function self = procrustes(engine)
 		% check for optimisation toolbox
 		v = ver;
 		assert(any(strcmp('Optimization Toolbox', {v.Name})),'optimisation toolbox is required')
 		assert(any(strcmp('Global Optimization Toolbox', {v.Name})),'Global Optimization Toolbox is required')
+		self.engine = engine;
+
 	end % end constructor
 
 	function self = set.x(self,value)
 		value.closed_loop = false;
 		assert(length(value)==1,'Only one Xolotl object at a time')
-		value.skip_hash_check = true;
 		self.x = value;
 	end
 
@@ -98,13 +99,9 @@ methods
 
 	function x = fit(self)
 
+		self.x.skip_hash_check = true;
+
 		assert(~isempty(self.parameter_names),'No parameter names defined')
-
-		self.x.transpile;
-		self.x.compile;
-
-		psoptions = psoptimset('UseParallel',self.use_parallel, 'Vectorized', 'off','Cache','on','CompletePoll','on','Display',self.display_type,'MaxIter',self.nsteps,'MaxFunEvals',self.max_fun_evals,'TolMesh',self.tol_mesh,'TolX',self.tol_x);
-
 
 		if isempty(self.seed) && ~isempty(self.ub) && ~isempty(self.lb)
 			% pick a random seed within bounds
@@ -113,12 +110,68 @@ methods
 			self.seed = (rand(length(self.ub),1).*(self.ub - self.lb) + self.lb);
 		end
 
-		assert(length(unique([length(self.seed), length(self.lb), length(self.ub)])) == 1, 'Length of lower bounds, upper bounds and seed should be the same')
 
-		x = patternsearch(@(params) self.evaluate(params),self.seed,[],[],[],[],self.lb,self.ub,psoptions);
+		switch self.engine
+		case 'patternsearch'
 
-		% update seed
-		self.seed = x;
+			assert(length(unique([length(self.seed), length(self.lb), length(self.ub)])) == 1, 'Length of lower bounds, upper bounds and seed should be the same')
+
+			x = patternsearch(@(params) self.evaluate(params),self.seed,[],[],[],[],self.lb,self.ub,self.options);
+
+			% update seed
+			self.seed = x;
+
+
+		case 'particleswarm'
+			self.timestamp = zeros(1e3,1);
+			self.best_cost = zeros(1e3,1);
+
+			self.options.InitialSwarmMatrix = self.seed;
+
+			x = particleswarm(@(params) self.evaluate(params),length(self.ub),self.lb,self.ub,self.options);
+
+			% update seed
+			self.seed = x;
+
+		end
+
+	end % end fit
+
+	function self = set.engine(self,value)
+		switch value 
+		case 'patternsearch'
+			self.engine = 'patternsearch';
+			self.options = optimoptions('patternsearch');
+			self.options.UseParallel = true;
+			self.options.Display = 'iter';
+			self.options.MaxTime = 100;
+			self.options.OutputFcn = @self.pattern_logger;
+		case 'particleswarm'
+			self.engine = 'particleswarm';
+			self.options = optimoptions('particleswarm');
+			self.options.UseParallel = true;
+			self.options.ObjectiveLimit = 0;
+			self.options.Display = 'iter';
+			self.options.MaxTime = 100;
+			self.options.OutputFcn = @self.swarm_logger;
+		otherwise 
+			error('Unknown engine')
+		end
+	end % set engine
+
+	function stop = swarm_logger(self,optimValues,~)
+		stop = false;
+
+		self.best_cost(optimValues.iteration+1) = optimValues.bestfval;
+		self.timestamp(optimValues.iteration+1) = now;
+
+	end
+
+	function [stop, options, optchanged] = pattern_logger(self,optimValues,options,~)
+		stop = false;
+		optchanged = false;
+		self.best_cost(optimValues.iteration+1) = optimValues.fval;
+		self.timestamp(optimValues.iteration+1) = now;
 
 	end
 
