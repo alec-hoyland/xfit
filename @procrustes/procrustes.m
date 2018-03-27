@@ -47,14 +47,13 @@ methods
 
 	function self = set.x(self,value)
 		value.closed_loop = false;
-		assert(length(value)==1,'Only one Xolotl object at a time')
+		assert(length(value) == 1,'Only one Xolotl object at a time')
 		self.x = value;
 	end
 
 	function updateParams(self,params)
 		for i = 1:length(self.parameter_names)
-			eval(['self.x.' self.parameter_names{i} '= params(' mat2str(i) ');'])
-			% is there a way around this eval? I don't think so
+			self.x.set(self.parameter_names{i},params(i))
 		end
 	end
 

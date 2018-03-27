@@ -8,7 +8,7 @@
 % 4) slow wave voltage maximum  
 
 
-% conversion from Prinz to phi
+
 vol = 1; % this can be anything, doesn't matter
 f = 14.96; % uM/nA
 tau_Ca = 200;
@@ -17,23 +17,25 @@ phi = (2*f*F*vol)/tau_Ca;
 
 x = xolotl;
 x.cleanup;
-x.addCompartment('AB',-65,0.02,10,0.0628,vol,phi,3000,0.05,tau_Ca,0);
 
-x.addConductance('AB','prinz/NaV',1000,50);
-x.addConductance('AB','prinz/CaT',25,30);
-x.addConductance('AB','prinz/CaS',60,30);
-x.addConductance('AB','prinz/ACurrent',500,-80);
-x.addConductance('AB','prinz/KCa',50,-80);
-x.addConductance('AB','prinz/Kd',1000,-80);
-x.addConductance('AB','prinz/HCurrent',.1,-20);
-x.addConductance('AB','Leak',.3,-50);
+x.add('AB','compartment','V',-65,'Ca',0.02,'Cm',10,'A',0.0628,'vol',vol,'phi',phi,'Ca_out',3000,'Ca_in',0.05,'tau_Ca',tau_Ca);
 
-x.dt = 100e-3;
+x.AB.add('prinz-approx/NaV','gbar',1000,'E',50);
+x.AB.add('prinz-approx/CaT','gbar',25,'E',30);
+x.AB.add('prinz-approx/CaS','gbar',60,'E',30);
+x.AB.add('prinz-approx/ACurrent','gbar',500,'E',-80);
+x.AB.add('prinz-approx/KCa','gbar',50,'E',-80);
+x.AB.add('prinz-approx/Kd','gbar',1000,'E',-80);
+x.AB.add('prinz-approx/HCurrent','gbar',.1,'E',-20);
+x.AB.add('Leak','gbar',.3,'E',-50);
+
+x.sim_dt = .1;
+x.dt = .1;
 x.t_end = 20e3;
 
 x.transpile;
 x.compile;
-x.I_ext = 0;
+
 V = x.integrate;
 
 
