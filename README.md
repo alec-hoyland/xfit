@@ -1,6 +1,6 @@
 # procrustes
 
-Force-fit [Xolotl]() objects so that they satisfy an arbitrary set of constraints. 
+Force-fit [Xolotl](https://github.com/sg-s/xolotl) objects so that they satisfy an arbitrary set of constraints. 
 
 ![](./images/bed.png) 
 
