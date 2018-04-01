@@ -39,6 +39,7 @@ methods
 	function self = procrustes(engine)
 		% check for optimisation toolbox
 		v = ver;
+		gcp;
 		assert(any(strcmp('Optimization Toolbox', {v.Name})),'optimisation toolbox is required')
 		assert(any(strcmp('Global Optimization Toolbox', {v.Name})),'Global Optimization Toolbox is required')
 		self.engine = engine;
@@ -137,6 +138,7 @@ methods
 	end % end fit
 
 	function self = set.engine(self,value)
+		pool = gcp;
 		switch value 
 		case 'patternsearch'
 			self.engine = 'patternsearch';
@@ -153,6 +155,7 @@ methods
 			self.options.Display = 'iter';
 			self.options.MaxTime = 100;
 			self.options.OutputFcn = @self.swarm_logger;
+			self.options.SwarmSize = 2*pool.NumWorkers;
 		case 'ga'
 			self.engine = 'ga';
 			self.options = optimoptions('ga');
