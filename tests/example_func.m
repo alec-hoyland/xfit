@@ -7,7 +7,7 @@
 
 function C = example_func(x)
 
-inf_cost = 1;
+inf_cost = 1e3;
 C = inf_cost;
 
 try
