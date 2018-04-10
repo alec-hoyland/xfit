@@ -99,8 +99,6 @@ methods
 
 	function x = fit(self)
 
-		self.x.skip_hash_check = true;
-
 		assert(~isempty(self.parameter_names),'No parameter names defined')
 
 		if isempty(self.seed) && ~isempty(self.ub) && ~isempty(self.lb)
