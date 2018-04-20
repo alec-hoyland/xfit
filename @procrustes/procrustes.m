@@ -1,3 +1,10 @@
+%                                      _            
+%  _ __  _ __ ___   ___ _ __ _   _ ___| |_ ___  ___ 
+% | '_ \| '__/ _ \ / __| '__| | | / __| __/ _ \/ __|
+% | |_) | | | (_) | (__| |  | |_| \__ \ ||  __/\__ \
+% | .__/|_|  \___/ \___|_|   \__,_|___/\__\___||___/
+% |_|  
+%
 % procrustes is a toolbox that attempts
 % to change parameters in a Xolotl object
 % so that it fits some arbitrary set of conditions
@@ -53,7 +60,18 @@ methods
 		for i = 1:length(self.parameter_names)
 			self.x.set(self.parameter_names{i},params(i))
 		end
-		c = self.sim_func(self.x);
+		c = self.sim_func(self.x,self.I_ext,self.V_clamp);
+	end
+
+	function self = set.parameter_names(self,names)
+		% check that a xolotl object is configured
+		assert(~isempty(self.x),'First configure a xolotl object')
+
+		% check that they all resolve correctly
+		for i = 1:length(names)
+			assert(self.x.exist(names{i}),['This name does not resolve to anything in the xolotl object tree: ' names{i}])
+		end
+		self.parameter_names = names;
 	end
 
 

@@ -1,8 +1,17 @@
+%                                      _            
+%  _ __  _ __ ___   ___ _ __ _   _ ___| |_ ___  ___ 
+% | '_ \| '__/ _ \ / __| '__| | | / __| __/ _ \/ __|
+% | |_) | | | (_) | (__| |  | |_| \__ \ ||  __/\__ \
+% | .__/|_|  \___/ \___|_|   \__,_|___/\__\___||___/
+% |_|  
+%
+% fits a xolotl model 
+
 function x = fit(self)
 
 assert(~isempty(self.parameter_names),'No parameter names defined')
 assert(~isempty(self.x),'Xolotl object not configured')
-
+assert(~isempty(self.sim_func),'Simulation function not set')
 
 if isempty(self.seed) && ~isempty(self.ub) && ~isempty(self.lb)
 	% pick a random seed within bounds
@@ -36,3 +45,5 @@ case 'ga'
 
 end
 
+% now update the parameters of the xolotl object
+self.x.set(self.parameter_names,self.seed)
