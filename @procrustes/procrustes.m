@@ -28,9 +28,6 @@ properties
 	display_type = 'iter'
 	engine 
 
-	V_clamp = [];
-	I_ext = [];
-
 	% logging
 	timestamp
 	best_cost
@@ -60,7 +57,7 @@ methods
 		for i = 1:length(self.parameter_names)
 			self.x.set(self.parameter_names{i},params(i))
 		end
-		c = self.sim_func(self.x,self.I_ext,self.V_clamp);
+		c = self.sim_func(self.x);
 	end
 
 	function self = set.parameter_names(self,names)
