@@ -155,18 +155,46 @@ methods (Static)
 
 
 	% converts a voltage trace into a LeMasson matrix 
-	function M = V2matrix(V, V_lim, dV_lim)
+	function [M, V_lim, dV_lim] = V2matrix(V, V_lim, dV_lim)
 
 		assert(isvector(V),'V has to be a vector')
+
+		V = V(:);
+		dV = [NaN; diff(V)];
+
+		if nargin == 1
+			% return V_lim and dV_lim too
+			m = abs(max(V));
+			V_lim(2) = round(m,-floor(log10(m))) + 10^floor(log10(m));
+			m = abs(min(V));
+			V_lim(1) = round(m,-floor(log10(m))) + 10^floor(log10(m));
+			if min(V) < 0
+				V_lim(1) = -V_lim(1);
+			end
+			if max(V) < 0
+				V_lim(2) = -V_lim(2);
+			end
+
+			% dV_lim
+			m = abs(max(dV));
+			dV_lim(2) = round(m,-floor(log10(m))) + 10^floor(log10(m));
+			m = abs(min(dV));
+			dV_lim(1) = round(m,-floor(log10(m))) + 10^floor(log10(m));
+			if min(dV) < 0
+				dV_lim(1) = -dV_lim(1);
+			end
+			if max(dV) < 0
+				dV_lim(2) = -V_lim(2);
+			end
+
+		end
+
 		assert(isvector(V_lim),'V_lim has to be a vector')
 		assert(isvector(dV_lim),'dV_lim has to be a vector')
 		assert(length(V_lim) == 2,'size of V_lim has to be 2x1')
 		assert(length(dV_lim) == 2,'size of dV_lim has to be 2x1')
 
-		V = V(:);
 		
-
-		dV = [NaN; diff(V)];
 
 		% overflow
 		V(V<V_lim(1)) = NaN;

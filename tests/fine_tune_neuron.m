@@ -35,11 +35,21 @@ x.sim_dt = .1;
 x.integrate;
 V = x.integrate;
 
+% now make a new one using liu channels
+x2 = xolotl;
+prefix = 'liu/';
+x2.add('compartment','AB','Cm',10,'A',A,'vol',A,'phi',906);
+for i = 1:length(channels)
+	x2.AB.add([prefix channels{i}],'gbar',gbar(i),'E',E(i));
+end
 
 
+x2.dt = .1;
+x2.sim_dt = .1;
+x2.integrate;
 
 p = procrustes('particleswarm');
-p.x = x;
+p.x = x2;
 
 p.data.LeMassonMatrix = procrustes.V2matrix(V,[-80 50],[-20 30]);
 
@@ -56,14 +66,14 @@ p.sim_func = @example_func;
 p.seed = [];
 
 
-figure('outerposition',[0 0 1000 500],'PaperUnits','points','PaperSize',[1000 500]); hold on
-t = x.dt*(1:length(V))*1e-3;
-c = lines;
-for i = 1:6
-	p.seed = [];
-	subplot(2,3,i); hold on
-	p.fit;
-	V = p.x.integrate;
-	plot(t,V,'Color',c(i,:))
-	drawnow
-end
+% figure('outerposition',[0 0 1000 500],'PaperUnits','points','PaperSize',[1000 500]); hold on
+% t = x.dt*(1:length(V))*1e-3;
+% c = lines;
+% for i = 1:6
+% 	p.seed = [];
+% 	subplot(2,3,i); hold on
+% 	p.fit;
+% 	V = p.x.integrate;
+% 	plot(t,V,'Color',c(i,:))
+% 	drawnow
+% end
