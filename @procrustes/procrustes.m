@@ -32,6 +32,9 @@ properties
 	timestamp
 	best_cost
 
+	% this can be used to store any user-defined data
+	data
+
 
 end % end props
 
@@ -57,7 +60,7 @@ methods
 		for i = 1:length(self.parameter_names)
 			self.x.set(self.parameter_names{i},params(i))
 		end
-		c = self.sim_func(self.x);
+		c = self.sim_func(self.x, self.data);
 	end
 
 	function self = set.parameter_names(self,names)
@@ -127,6 +130,83 @@ methods
 	end % end ga logger
 
 end % end methods
+
+
+methods (Static)
+
+	% computes the cost between two LeMasson matrices
+	function C = matrixCost(M1,M2)
+		
+		assert(size(M1,2) == size(M2,2),'matrices not same size')
+		assert(size(M1,1) == size(M2,1),'matrices not same size')
+
+		N1 = sum(M1(:));
+		N2 = sum(M2(:));
+
+		C = 0;
+
+		for i = 1:size(M1,1)
+			for j = 1:size(M1,2)
+				C = C + (M1(i,j)/N1 - M2(i,j)/N2)^2;
+			end
+		end
+
+	end
+
+
+	% converts a voltage trace into a LeMasson matrix 
+	function M = V2matrix(V, V_lim, dV_lim)
+
+		assert(isvector(V),'V has to be a vector')
+		assert(isvector(V_lim),'V_lim has to be a vector')
+		assert(isvector(dV_lim),'dV_lim has to be a vector')
+		assert(length(V_lim) == 2,'size of V_lim has to be 2x1')
+		assert(length(dV_lim) == 2,'size of dV_lim has to be 2x1')
+
+		V = V(:);
+		
+
+		dV = [NaN; diff(V)];
+
+		% overflow
+		V(V<V_lim(1)) = NaN;
+		V(V>V_lim(2)) = NaN;
+		dV(dV<dV_lim(1)) = NaN;
+		dV(dV>dV_lim(2)) = NaN;
+
+		
+		% discetize traces
+		V = V - V_lim(1);
+		V = V/(V_lim(2) - V_lim(1));
+		V = ceil(V*99)+1;
+
+		dV = dV - dV_lim(1);
+		dV = dV/(dV_lim(2) - dV_lim(1));
+		dV = ceil(dV*99)+1;
+
+		M = zeros(101,101);
+		% M(101,101) is used to collect overflow terms
+
+
+		% other way 
+		for i = 1:length(V)
+			if isnan(V(i))
+				M(101,101) = M(101,101) + 1;
+				continue
+			end
+			if isnan(dV(i))
+				M(101,101) = M(101,101) + 1;
+				continue
+			end
+			M(V(i),dV(i)) = M(V(i),dV(i)) + 1;
+		end
+		
+	
+
+	end
+
+
+end % end static method
 
 
 end % end classdef
