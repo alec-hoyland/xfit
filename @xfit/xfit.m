@@ -69,7 +69,13 @@ methods
 
 		% check that they all resolve correctly
 		for i = 1:length(names)
-			assert(self.x.exist(names{i}),['This name does not resolve to anything in the xolotl object tree: ' names{i}])
+			try
+				self.x.get(names{i});
+			catch
+				
+				error(['This name does not resolve to anything in the xolotl object tree: ' names{i}])
+			end
+			
 		end
 		self.parameter_names = names;
 	end
