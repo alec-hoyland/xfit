@@ -1,13 +1,30 @@
-%                                      _            
-%  _ __  _ __ ___   ___ _ __ _   _ ___| |_ ___  ___ 
-% | '_ \| '__/ _ \ / __| '__| | | / __| __/ _ \/ __|
-% | |_) | | | (_) | (__| |  | |_| \__ \ ||  __/\__ \
-% | .__/|_|  \___/ \___|_|   \__,_|___/\__\___||___/
-% |_|  
-%
-% fits a xolotl model 
+%{
+       __ _ _   
+__  __/ _(_) |_ 
+\ \/ / |_| | __|
+ >  <|  _| | |_ 
+/_/\_\_| |_|\__|
+                
 
-function x = fit(self)
+### fit
+
+**Syntax**
+
+```matlab
+best_fit_params = fit(self);
+```
+
+**Description**
+
+Runs the optimization algorithm in an effort to minimze
+the cost function. Returns a vector of the best-fit
+parameters. Only the last (best-fit) value is returned. 
+
+The best-fit value is also used to update the seed
+
+%}
+
+function best_fit_params = fit(self)
 
 assert(~isempty(self.parameter_names),'No parameter names defined')
 assert(~isempty(self.x),'Xolotl object not configured')
@@ -30,18 +47,18 @@ assert(length(unique([length(self.seed),length(self.parameter_names) , length(se
 switch self.engine
 case 'patternsearch'
 
-	x = patternsearch(@(params) self.evaluate(params),self.seed,[],[],[],[],self.lb,self.ub,self.options);
-	self.seed = x;
+	best_fit_params = patternsearch(@(params) self.evaluate(params),self.seed,[],[],[],[],self.lb,self.ub,self.options);
+	self.seed = best_fit_params;
 
 case 'particleswarm'
 	
 	self.options.InitialSwarmMatrix = self.seed(:)';
-	x = particleswarm(@(params) self.evaluate(params),length(self.ub),self.lb,self.ub,self.options);
-	self.seed = x;
+	best_fit_params = particleswarm(@(params) self.evaluate(params),length(self.ub),self.lb,self.ub,self.options);
+	self.seed = best_fit_params;
 case 'ga'
 	self.options.InitialPopulationMatrix = self.seed;
-	x = ga(@(params) self.evaluate(params), length(self.ub), [], [], [], [], self.lb, self.ub, [], self.options);
-	self.seed = x;
+	best_fit_params = ga(@(params) self.evaluate(params), length(self.ub), [], [], [], [], self.lb, self.ub, [], self.options);
+	self.seed = best_fit_params;
 
 end
 

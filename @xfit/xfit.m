@@ -43,6 +43,9 @@ methods
 		% check for optimisation toolbox
 		v = ver;
 		gcp;
+		if nargin ==0 
+			engine = 'particleswarm';
+		end
 		assert(any(strcmp('Optimization Toolbox', {v.Name})),'optimisation toolbox is required')
 		assert(any(strcmp('Global Optimization Toolbox', {v.Name})),'Global Optimization Toolbox is required')
 		self.engine = engine;
@@ -55,13 +58,6 @@ methods
 		self.x = value;
 	end
 
-	function c = evaluate(self,params)
-		% update parameters in the xolotl object using x
-		for i = 1:length(self.parameter_names)
-			self.x.set(self.parameter_names{i},params(i))
-		end
-		c = self.sim_func(self.x, self.data);
-	end
 
 	function self = set.parameter_names(self,names)
 		% check that a xolotl object is configured
@@ -138,9 +134,6 @@ methods
 end % end methods
 
 
-methods (Static)
-
-end % end static method
 
 
 end % end classdef
