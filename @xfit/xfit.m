@@ -5,11 +5,11 @@
 % | .__/|_|  \___/ \___|_|   \__,_|___/\__\___||___/
 % |_|  
 %
-% procrustes is a toolbox that attempts
+% xfit is a toolbox that attempts
 % to change parameters in a Xolotl object
 % so that it fits some arbitrary set of conditions
 
-classdef procrustes < handle
+classdef xfit < handle
 
 properties
 	x@xolotl
@@ -39,7 +39,7 @@ properties
 end % end props
 
 methods
-	function self = procrustes(engine)
+	function self = xfit(engine)
 		% check for optimisation toolbox
 		v = ver;
 		gcp;

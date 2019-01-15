@@ -1,4 +1,4 @@
-# procrustes
+# xfit
 
 Force-fit [Xolotl](https://github.com/sg-s/xolotl) objects so that they satisfy an arbitrary set of constraints. 
 
@@ -32,32 +32,7 @@ This also means that you can very efficiently generate neurons from random initi
 
 ![](https://user-images.githubusercontent.com/6005346/37423634-bf55520c-2794-11e8-87b6-3c466da8df19.png)
 
-# Installation 
 
-Get this repo from within `MATLAB` using my package manager:
-
-```
-% copy and paste this code in your MATLAB prompt
-urlwrite('http://srinivas.gs/install.m','install.m'); 
-install sg-s/srinivas.gs_mtools % you'll need this
-install sg-s/procrustes 
-install sg-s/xolotl
-```
-
-or use git if you plan to develop this further: 
-
-```
-git clone https://github.com/sg-s/srinivas.gs_mtools
-git clone https://github.com/sg-s/procrustes
-git clone https://github.com/sg-s/xolotl
-```
-
-Finally, make sure you [configure MATLAB so that it is set up to delete files permanently](https://www.mathworks.com/help/matlab/ref/delete.html). Otherwise you will end up with a very large number of temporary files in your trash!
-
-
-# Usage 
-
-Look at `tests/fine_tune_neuron.m` for an example that has been worked out. 
 
 
 # License
