@@ -134,6 +134,10 @@ methods
 end % end methods
 
 
+methods (Static)
+	b = binCost(r,a);
+end
+
 
 
 end % end classdef
