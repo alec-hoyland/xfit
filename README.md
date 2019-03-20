@@ -17,7 +17,7 @@ Let's say you start with the neuron on the left. You're unhappy with it, because
 4. It doesn't have a burst frequency of .5 Hz
 5. It doesn't have a duty cycle of .3
 
-What if you could make this neuron do what you want it to? `procrustes` fiddles with parameters in the model till it does what it should (on the right).
+What if you could make this neuron do what you want it to? `xfit` fiddles with parameters in the model till it does what it should (on the right).
 
 Right now, you can use two algorithms: 
 
@@ -37,4 +37,4 @@ This also means that you can very efficiently generate neurons from random initi
 
 # License
 
-`procrustes` is free software. GPL v3. 
+`xfit` is free software. GPL v3. 
