@@ -19,7 +19,7 @@ Let's say you start with the neuron on the left. You're unhappy with it, because
 
 What if you could make this neuron do what you want it to? `xfit` fiddles with parameters in the model till it does what it should (on the right).
 
-Right now, you can use two algorithms: 
+Right now, you can use three algorithms: 
 
 1. `patternsearch` which is deterministic, and is a glorified form of gradient descent
 2. `particleswarm` which is based on how flocks of birds fly and avoid predators. It's stochastic 
