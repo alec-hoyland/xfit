@@ -2,7 +2,7 @@
 % and optimize its maximal conductances so that it has a 
 % desired period
 
-x = xolotl.examples.BurstingNeuron('prinz');
+x = xolotl.examples.BurstingNeuron('prefix','prinz');
 
 p = xfit;
 
