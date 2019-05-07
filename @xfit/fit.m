@@ -24,7 +24,7 @@ The best-fit value is also used to update the seed
 
 %}
 
-function best_fit_params = fit(self)
+function fit(self)
 
 assert(~isempty(self.parameter_names),'No parameter names defined')
 assert(~isempty(self.x),'Xolotl object not configured')
