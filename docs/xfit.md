@@ -7,6 +7,8 @@ xfit can be instantiated by running:
 
 ```matlab
 p = xfit;
+% you can also specify an engine
+p = xfit('particleswarm');
 ```
 
 ## Requirements
