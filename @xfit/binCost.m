@@ -1,3 +1,31 @@
+%{
+       __ _ _
+__  __/ _(_) |_
+\ \/ / |_| | __|
+ >  <|  _| | |_
+/_/\_\_| |_|\__|
+
+
+### binCost
+
+**Syntax**
+
+```matlab
+	c = xfit.binCost(allowed_range, actual_value)
+```
+
+**Description**
+
+A static method that computes a quadratic cost
+when `actual_value` is outside of the minimum and maximum
+set by the 2-vector `allowed_range`, and returns zero otherwise.
+
+This method can be used as part of a simulation function
+when it is important for neurocomputational properties of interest to
+fit within a given range, rather than necessarily fit a value perfectly.
+
+%}
+
 function c = binCost(allowed_range,actual_value)
 
 
@@ -19,4 +47,3 @@ else
 	% no cost
 	c = 0;
 end
-
