@@ -25,7 +25,7 @@ configured in the xfit object:
 
 - `x` (the xolotl object)
 - `sim_func`
-- `paramter_names`
+- `parameter_names`
 
 %}
 
