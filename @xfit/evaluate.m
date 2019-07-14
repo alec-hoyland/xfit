@@ -17,7 +17,7 @@ c = evaluate(self,params);
 **Description**
 
 Updates parameters in the xolotl object using
-params (a vector), evaluate the cost function,
+`params` (a vector), evaluate the cost function,
 and return a cost (a double).
 
 It is assumed that you have the following things
